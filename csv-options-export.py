@@ -74,7 +74,7 @@ paginated = True
 page = 0
 row = 0
 while paginated:
-    for i, order in enumerate(orders['results']):
+    for order in orders['results']:
         for j, leg in enumerate(order['legs']):
             counter = row + (page * 100)
             executions = leg['executions']
@@ -85,17 +85,17 @@ while paginated:
             fields[counter]['Strike_price'] = contract['strike_price']
             fields[counter]['Expiration_date'] = contract['expiration_date']
             # Read thro all the data under the order and add it to the csv row
-            for key, value in enumerate(leg):
+            for value in leg:
                 if value != 'executions':
                         fields[counter][value] = leg[value]
-            for key, value in enumerate(order):
+            for value in order:
                 if value != "legs":
                     fields[counter][value] = order[value]
             # Update trade count if order was filled to report at the end about how many trades were exported
             if order['state'] == "filled":
                 trade_count += 1
                 # Since the order is filled, read all the leg and execution information such as date placed, amount paid, drag them over to csv
-                for key, value in enumerate(executions[0]):
+                for value in executions[0]:
                     fields[counter][value] = executions[0][value]
             elif order['state'] == "queued":
                 queued_count += 1
@@ -107,7 +107,7 @@ while paginated:
             row += 1
     # paginate
     if orders['next'] is not None:
-        page = page + 1
+        page += 1
         orders = robinhood.get_custom_endpoint(str(orders['next']))
     else:
         paginated = False

@@ -80,7 +80,7 @@ while paginated:
 
         fields[i + (page * 100)]['symbol'] = symbol
 
-        for key, value in enumerate(order):
+        for value in order:
             if value != "executions":
                 fields[i + (page * 100)][value] = order[value]
 
@@ -96,7 +96,7 @@ while paginated:
             queued_count += 1
     # paginate
     if orders['next'] is not None:
-        page = page + 1
+        page += 1
         orders = robinhood.get_custom_endpoint(str(orders['next']))
     else:
         paginated = False
@@ -169,7 +169,7 @@ if args.dividends:
 
             fields[i + (page * 100)]['symbol'] = symbol
 
-            for key, value in enumerate(dividend):
+            for value in dividend:
                 if value != "executions":
                     fields[i + (page * 100)][value] = dividend[value]
 
@@ -181,7 +181,7 @@ if args.dividends:
                 dividend_count += 1
         # paginate
         if dividends['next'] is not None:
-            page = page + 1
+            page += 1
             orders = robinhood.get_custom_endpoint(str(dividends['next']))
         else:
             paginated = False
