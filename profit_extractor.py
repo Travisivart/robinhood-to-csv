@@ -99,7 +99,7 @@ def profit_extractor(csv_val,  filename):
             ws_count_temp = ws_count
             for q, p in buy_list:
                 total_buy += float(q)*float(p)
-                for i in range(0, q):
+                for _ in range(q):
                     if ws_count_temp > 0:
                         amount = p-float(row.average_price)
                         if amount > 0:
@@ -117,7 +117,7 @@ def profit_extractor(csv_val,  filename):
 
     handle_raw['profit'] = handle['Profit']
     handle_raw['Wash Sale'] = handle['Wash Sale']
-    tax_row = "Tax("+str(tax_multiplier)+")"
+    tax_row = f'Tax({tax_multiplier})'
     handle_raw[tax_row] = handle['Tax']
     # save the profit CSV
     handle_raw.to_csv(profit_filename)

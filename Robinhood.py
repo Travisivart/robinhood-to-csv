@@ -98,7 +98,7 @@ class Robinhood:
             self.auth_token = res['access_token']
         except KeyError:
             return res
-        self.headers['Authorization'] = 'Bearer ' + self.auth_token
+        self.headers['Authorization'] = f'Bearer {self.auth_token}'
         return True
 
     ##############################
@@ -117,7 +117,7 @@ class Robinhood:
         self.session.get(self.endpoints['investment_profile'])
 
     def instruments(self, stock=None):
-        if stock == None:
+        if stock is None:
             res = self.session.get(self.endpoints['instruments'])
         else:
             res = self.session.get(self.endpoints['instruments'], params={'query':stock.upper()})
@@ -135,9 +135,9 @@ class Robinhood:
             if len(res) > 0:
                 return res;
             else:
-                raise NameError("Invalid Symbol: " + stock);
-        except (ValueError):
-            raise NameError("Invalid Symbol: " + stock);
+                raise NameError(f'Invalid Symbol: {stock}');
+        except ValueError:
+            raise NameError(f'Invalid Symbol: {stock}');
 
     def get_quote(self, stock=None):
         data = self.quote_data(stock)
@@ -190,13 +190,12 @@ class Robinhood:
 
     def place_order(self, instrument, quantity=1, bid_price = None, transaction=None):
         # cache the account ID that's needed for placing orders
-        if self.positions == None:
+        if self.positions is None:
             self.positions = self.get_endpoint("positions")['results']
-        if bid_price == None:
+        if bid_price is None:
             bid_price = self.quote_data(instrument['symbol'])[0]['bid_price']
-        data = 'account=%s&instrument=%s&price=%f&quantity=%d&side=buy&symbol=%s&time_in_force=gfd&trigger=immediate&type=market' % (urllib.quote(self.positions[0]['account']), urllib.unquote(instrument['url']), float(bid_price), quantity, instrument['symbol']) 
-        res = self.session.post(self.endpoints['orders'], data=data)
-        return res
+        data = 'account=%s&instrument=%s&price=%f&quantity=%d&side=buy&symbol=%s&time_in_force=gfd&trigger=immediate&type=market' % (urllib.quote(self.positions[0]['account']), urllib.unquote(instrument['url']), float(bid_price), quantity, instrument['symbol'])
+        return self.session.post(self.endpoints['orders'], data=data)
 
     def place_buy_order(self, instrument, quantity, bid_price=None):
         transaction = "buy"
